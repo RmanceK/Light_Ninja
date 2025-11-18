@@ -19,4 +19,5 @@ Pour démarrer le projet depuis le Raspberry py, il faut:
 Pour démarrer le projet depuis un ordinateur, il faut :
 	Aller dans le terminal de l'ordinateur.
 	Aller dans le répertoire du projet, puis entrer la commande 'python app.py.
+
 	Ouvrir un navigateur et entrer le lien 'http://127.0.0.1:5000'.
