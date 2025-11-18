@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Settings</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/settings.css') }}">
+</head>
+<body>
+    <h1 class="title">LIGHT NINJA</h1>
+
+    <div class="container">
+        <h1>Mon Compte</h1>
+        <div class="settings-layout">
+            <!-- Profile Picture Section -->
+            <div class="profile-section">
+                <h3>Photo de profil</h3>
+                <img src="{{ url_for('static', filename='images/' + profile_pic) }}" alt="Profile Picture">
+                <button onclick="window.location.href='{{ url_for('profile_picture_selection') }}'">Modifier</button>
+            </div>
+
+            <!-- Username and Password Section -->
+            <div class="settings-section">
+                <!-- Username Section -->
+                <div class="setting-item">
+                    <h3>Nom d'utilisateur</h3>
+                    <span id="current-username">{{ session.get('username') }}</span>
+                    <button onclick="toggleUsernameInput()">Modifier</button>
+                    <div id="username-input" style="display:none;">
+                        <input type="text" id="new-username" placeholder="Nouveau nom d'utilisateur">
+                        <button onclick="saveUsername()">Enregistrer</button>
+                        <button class="cancel-btn" onclick="cancelUsernameEdit()">Annuler</button>
+                    </div>
+                </div>
+    
+                <!-- Password Section -->
+                <div class="setting-item">
+                    <h3>Mot de passe</h3>
+                    <span>********</span>
+                    <button onclick="togglePasswordInput()">Modifier</button>
+                    <div id="password-input" style="display:none;">
+                        <input type="password" id="new-password" placeholder="Nouveau mot de passe">
+                        <button onclick="savePassword()">Enregistrer</button>
+                        <button class="cancel-btn" onclick="cancelPasswordEdit()">Annuler</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button class="retour-accueil" onclick="window.location.href='{{ url_for('home') }}'">Retour à l'accueil</button>
+    </div>
+    
+
+    <script>
+        // Toggle Username Input
+        function toggleUsernameInput() {
+            const usernameInput = document.getElementById('username-input').style;
+            usernameInput.display = usernameInput.display === "none" ? "block" : "none";
+        }
+
+        // Cancel Username Edit
+        function cancelUsernameEdit() {
+            document.getElementById('new-username').value = ""; // Clear input
+            document.getElementById('username-input').style.display = "none"; // Hide input section
+        }
+
+        // Save Username
+        function saveUsername() {
+            const newUsername = document.getElementById('new-username').value;
+            if (newUsername !== "") {
+                fetch('/change_username', {
+                    method: 'POST',
+                    body: JSON.stringify({ username: newUsername }),
+                    headers: { 'Content-Type': 'application/json' }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.reload();
+                    } else {
+                        alert(data.message);
+                    }
+                });
+            }
+        }
+
+
+            // Toggles the visibility of the password input field
+        function togglePasswordInput() {
+            const passwordInput = document.getElementById('password-input').style;
+            passwordInput.display = passwordInput.display === "none" ? "block" : "none";
+        }
+
+        // Cancels password editing, hides the input field, and clears the entered value
+        function cancelPasswordEdit() {
+            document.getElementById('new-password').value = ""; // Clear the input
+            document.getElementById('password-input').style.display = "none"; // Hide the section
+        }
+
+        // Saves the new password, and hides the input field if successful
+        function savePassword() {
+            const newPassword = document.getElementById('new-password').value;
+            if (newPassword !== "") {
+                fetch('/change_password', {
+                    method: 'POST',
+                    body: JSON.stringify({ password: newPassword }),
+                    headers: { 'Content-Type': 'application/json' }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById('new-password').value = ""; // Clear input field
+                        document.getElementById('password-input').style.display = "none"; // Hide input section
+                    } else {
+                        alert(data.message);
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+</html>

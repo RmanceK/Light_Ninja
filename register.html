@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIGHT NINJA - Création de compte</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/logins.css') }}">
+</head>
+<body>
+    <div>
+        <h1 class="title">LIGHT NINJA</h1>
+
+        <div class="login-container">
+            <h1 class="creation-title">Création de compte</h1>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <p class="flash-error">{{ messages[0] }}</p> <!-- Display the first message only -->
+                {% endif %}
+            {% endwith %}
+            <form method="post">
+                <input type="text" name="username" placeholder="nom d’utilisateur" required>
+                <input type="password" name="password" placeholder="mot de passe" required>
+                <button type="submit">Créer mon compte</button>
+            </form>
+            <div class="link-text">
+                Vous avez déjà un compte?
+            </div>
+            <a href="{{ url_for('login') }}" class="secondary-button">Se connecter</a>
+        </div>
+    </div>
+</body>
+</html>

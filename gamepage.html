@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ game_name }}</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='font-awesome/css/all.min.css') }}">
+
+    <!-- Link to External CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/gamepage.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
+
+
+    <!-- Highcharts Script -->
+     
+    <script src="{{ url_for('static', filename='javascript/highcharts.js') }}"></script>
+    <script src="{{ url_for('static', filename='javascript/histogram-bellcurve.js') }}"></script>
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const goBackButton = document.querySelector('.go-back');
+            sidebar.classList.toggle('open'); // Toggle the 'open' class
+            goBackButton.classList.toggle('move-right'); // Move button
+        };
+    </script>
+</head>
+<body>
+    <div class="sidebar" onclick="toggleSidebar()">
+        <!-- Sidebar content here -->
+        <div class="sidebar-indicator"></div>
+        <div class="profile" onclick="window.location.href='{{ url_for('settings') }}'">
+            <img src="{{ url_for('static', filename='images/' + profile_pic) }}" alt="Profile Picture">
+            <span>{{ username }}</span>
+        </div>
+        <div class="stats">
+            <h3>Mon ranking:</h3>
+            {% for game, rank in ranking.items() %}
+                <p><span class="game-name">{{ game }}:</span> <span class="game-rank">n°{{ rank }}</span></p>
+            {% endfor %}
+        </div>
+        <button class="logout" onclick="window.location.href='{{ url_for('logout') }}'">
+            <i class="fas fa-power-off power-icon"></i>
+            <span class="logout-text">Déconnexion</span>
+        </button>
+        <button class="go-back" onclick="window.location.href='{{ url_for('home') }}'">
+            <i class="fas fa-arrow-left"></i> Précédent
+        </button>
+              
+    </div>
+
+    <div class="game-page">
+        <div class="game-header">
+            <h1 class="game-title">{{ game_name }}</h1>
+            <p class="game-description">
+                {{ description }}
+            </p>
+        </div>
+
+        <div class="current-game">
+            <div class="current-stats">{{ valeur_recente }}</div>
+            <button class="play-again" onclick="window.location.href='{{ url_for('jouer', game_name=game_name, username=username ) }}'">Jouer</button>
+        </div>
+        
+        <div class="content-container">
+
+            <div class="game-stats">
+                {% for game, stat in game_stats.items() %}
+                    <p class="stat-item">{{ game }} <strong>{{ stat }}</strong></p>
+                {% endfor %}
+            </div>
+        
+            <div class="charts">
+                <div id="progressContainer" class="chart">
+                    <div class="chart-title">Progression</div>
+                </div>
+                <div id="avgTimeContainer" class="chart">
+                    <div class="chart-title">Average Time</div>
+                </div>
+            </div>
+        </div>
+        
+
+        <!-- JAVASCRIPT HIGHCHARTS -->
+
+        <script>
+            // Getting the username passed from Flask and using it in your JavaScript
+            const username = "{{ username }}";
+            const game_name = "{{ game_name }}";
+            const DataType = "{{ DataType }}";
+            const YAxisText = "{{ YAxisText }}";
+            const AvgTitle = "{{ AvgTitle }}";
+            const GameBins = "{{ GameBins }}";
+    
+            // Fetch progress data from Flask
+            fetch(`/data_progres/${game_name}/${username}`)
+                .then(response => response.json())
+                .then(progressData => {
+                    console.log("Progress Data:", progressData);
+                    if (progressData.length > 0) {
+                        // Create Highcharts chart for progress data
+                        Highcharts.chart('progressContainer', {
+                            chart: {
+                                type: 'column'
+                            },
+                            title: {
+                                text: 'Ta Progression'
+                            },
+                            xAxis: {
+                                title: {
+                                    text: 'n-ième partie'
+                                }
+                            },
+                            yAxis: {
+                                title: {
+                                    text: YAxisText
+                                }
+                            },
+                            legend: {
+                                enabled: false
+                            },
+                            series: [{
+                                name: DataType,
+                                data: progressData
+                            }]
+                        });
+                    } else {
+                        console.log("No progress data available.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching progress data:", error);
+                });
+    
+            // Fetch average time data from Flask
+            // Fetch pre-binned average time data from Flask
+            fetch(`/data_moyenne/${game_name}`)
+            .then(response => response.json())
+            .then(histogramData => {
+                console.log("Histogram Data:", histogramData);
+
+                // Create the Highcharts histogram
+                Highcharts.chart('avgTimeContainer', {
+                    chart: {
+                        type: 'column'
+                    },
+                    title: {
+                        text: AvgTitle
+                    },
+                    xAxis: {
+                        title: {
+                            text: AvgTitle
+                        },
+                        categories: histogramData.map(bin => bin.x.toString()),
+                    },
+                    yAxis: {
+                        title: {
+                            text: 'Nombre de Personnes'
+                        }
+                    },
+                    legend: {
+                        enabled: false
+                    },
+                    series: [{
+                        name: 'Personnes',
+                        data: histogramData.map(bin => bin.count) 
+                    }]
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching average reaction times:', error);
+                alert("An error occurred while fetching the data.");
+            });
+
+        </script>
+
+    </div>
+    
+</body>
+</html>

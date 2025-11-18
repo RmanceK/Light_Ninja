@@ -1,0 +1,69 @@
+<!-- profile_picture_selection.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choose Your Profile Picture</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- Profile Picture Selection Box -->
+        <div class="profile-box">
+            <h1>Choisis ta photo de profil</h1>
+
+            <!-- Profile Section -->
+            <div class="profile-section">
+                <!-- Current Profile Picture -->
+                <div class="current-profile">
+                    <img id="profile-img" src="{{ url_for('static', filename='images/' + (session.get('profile_pic', 'no-profile.jpg'))) }}" alt="Profile Picture" class="profile-img">
+                    <h2 class="username">{{ session.get('username') }}</h2>
+                </div>
+
+                <!-- Selectable Images Section -->
+                <div class="image-options">
+                    <div class="image-row">
+                        <div class="profile-card" onclick="changeProfilePic('pfp1.jpg')">
+                            <img class="selectable-image" src="{{ url_for('static', filename='images/pfp1.jpg') }}" alt="Pic 1">
+                        </div>
+                        <div class="profile-card" onclick="changeProfilePic('pfp2.jpg')">
+                            <img class="selectable-image" src="{{ url_for('static', filename='images/pfp2.jpg') }}" alt="Pic 2">
+                        </div>
+                        <div class="profile-card" onclick="changeProfilePic('pfp3.jpg')">
+                            <img class="selectable-image" src="{{ url_for('static', filename='images/pfp3.jpg') }}" alt="Pic 3">
+                        </div>
+                    </div>
+                    <div class="image-row">
+                        <div class="profile-card" onclick="changeProfilePic('pfp4.jpg')">
+                            <img class="selectable-image" src="{{ url_for('static', filename='images/pfp4.jpg') }}" alt="Pic 4">
+                        </div>
+                        <div class="profile-card" onclick="changeProfilePic('pfp5.jpg')">
+                            <img class="selectable-image" src="{{ url_for('static', filename='images/pfp5.jpg') }}" alt="Pic 5">
+                        </div>
+                        <div class="profile-card" onclick="changeProfilePic('pfp6.jpg')">
+                            <img class="selectable-image" src="{{ url_for('static', filename='images/pfp6.jpg') }}" alt="Pic 6">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Save Button -->
+            <form action="{{ url_for('profile_picture_selection') }}" method="POST">
+                <input type="hidden" id="selected-img" name="selected-img" value="">
+                <button type="submit" class="save-btn">Enregister</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function changeProfilePic(imageName) {
+            // Update the profile picture displayed at the top
+            document.getElementById('profile-img').src = `/static/images/${imageName}`;
+
+            // Set the hidden input value to the selected image name
+            document.getElementById('selected-img').value = imageName;
+        }
+    </script>
+</body>
+</html>

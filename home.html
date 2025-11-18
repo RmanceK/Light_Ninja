@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Light Ninja</title>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='font-awesome/css/all.min.css') }}">
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/homestyles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('open'); // Toggles the sidebar open/close
+        }
+    </script>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar" onclick="toggleSidebar()">
+        <!-- Sidebar content here -->
+        <div class="sidebar-indicator"></div>
+        <div class="profile" onclick="window.location.href='{{ url_for('settings') }}'">
+            <img src="{{ url_for('static', filename='images/' + profile_pic) }}" alt="Profile Picture">
+            <span>{{ username }}</span>
+        </div>
+        <div class="stats">
+            <h3>Mon ranking:</h3>
+            {% for game, rank in ranking.items() %}
+                <p><span class="game-name">{{ game }}</span>: <span class="game-rank">n°{{ rank }}</span></p>
+            {% endfor %}
+        </div>
+        <button class="logout" onclick="window.location.href='{{ url_for('logout') }}'">
+            <i class="fas fa-power-off power-icon"></i>
+            <span class="logout-text">Déconnexion</span>
+        </button>
+    </div>
+
+    <!-- Main content -->
+    <div class="main-content">
+        <h1>LIGHT NINJA</h1>
+
+        <div class="game-grid">
+            <div class="game-card" onclick="window.location.href='{{ url_for('gamepage', game_name='Simon') }}'">
+                <h2>Simon</h2>
+                <img src="{{ url_for('static', filename='images/simon.jpg') }}" alt="Simon">
+            </div>
+            <div class="game-card" onclick="window.location.href='{{ url_for('gamepage', game_name='Simon_2') }}'">
+                <h2>Simon 2</h2>
+                <img src="{{ url_for('static', filename='images/simon2.png') }}" alt="Simon 2">
+            </div>
+            <div class="game-card" onclick="window.location.href='{{ url_for('gamepage', game_name='Reflex') }}'">
+                <h2>Reflex</h2>
+                <img src="{{ url_for('static', filename='images/reflex.jpg') }}" alt="Reflex">
+            </div>
+        </div>
+        <div class="game-grid">
+            <div class="game-card" onclick="window.location.href='{{ url_for('gamepage', game_name='Reflex_Couleur') }}'">
+                <h2>Reflex Couleur</h2>
+                <img src="{{ url_for('static', filename='images/reflex2.jpg') }}" alt="Reflex 2">
+            </div>
+            <div class="game-card" onclick="window.location.href='{{ url_for('gamepage', game_name='Reflex_Multijoueur') }}'">
+                <h2>Reflex Multijoueur</h2>
+                <img src="{{ url_for('static', filename='images/reflex-multijoueur.jpg') }}" alt="Reflex Multijoueur">
+            </div>
+            <div class="game-card" onclick="window.location.href='{{ url_for('gamepage', game_name='Mastermind') }}'">
+                <h2>Mastermind</h2>
+                <img src="{{ url_for('static', filename='images/mastermind.jpg') }}" alt="Mastermind">
+            </div>
+        </div>
+    </div>
+</body>
+</html>
